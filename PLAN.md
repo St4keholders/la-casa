@@ -57,7 +57,7 @@ El agente edita solo las columnas **Estado** y **Notas** de esta tabla, en sitio
 | 3 | Reconciliación: qué se queda y qué se borra | 2 | ✅ | 0 tablas restantes en public; reset limpio aplicado |
 | 4 | Aplicar las 8 migraciones | 3 | ✅ | 14 tablas con RLS, vistas con security_invoker verificado |
 | 5 | Semilla desde `lib/dishes.ts` | 4 | ✅ | 4 platos, 23 insumos, recetas y lote activo (16, 14, 9, 5 disponibles) |
-| 6 | Tipos y clientes de Supabase | 4 | ⬜ | |
+| 6 | Tipos y clientes de Supabase | 4 | ✅ | database.types.ts generado, client/server/middleware listos |
 | 7 | Sistema de diseño del panel | 1 | ⬜ | |
 | 8 | Menú público dinámico | 5, 6 | ⬜ | |
 | 9 | Checkout real + WhatsApp como notificación | 8 | ⬜ | |
