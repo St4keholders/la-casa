@@ -60,7 +60,7 @@ El agente edita solo las columnas **Estado** y **Notas** de esta tabla, en sitio
 | 6 | Tipos y clientes de Supabase | 4 | ✅ | database.types.ts generado, client/server/middleware listos |
 | 7 | Sistema de diseño del panel | 1 | ✅ | 7 componentes primitivos, panel.css y vitrina /panel/disenio |
 | 8 | Menú público dinámico | 5, 6 | ✅ | vista_menu_publico conectada, platos dinámicos, lib/dishes.ts eliminado |
-| 9 | Checkout real + WhatsApp como notificación | 8 | ⬜ | |
+| 9 | Checkout real + WhatsApp como notificación | 8 | ✅ | fn_crear_orden_publica integrada, código secuencial, stock reservado verificado |
 | 10 | Auth y layout del panel | 6, 7 | ⬜ | |
 | 11 | Panel · Comandas del fin de semana | 10 | ⬜ | |
 | 12 | Panel · Cocina: producción y mermas | 10 | ⬜ | |

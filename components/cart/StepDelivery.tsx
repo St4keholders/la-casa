@@ -4,6 +4,8 @@ import { useRef, useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import { cop } from '@/lib/format';
 import { buildWaLink } from '@/lib/whatsapp';
+import { crearPedido, mapearErrorPedido } from '@/lib/pedidos';
+import { formatFechaIso } from '@/lib/weekend';
 import type { Finde } from '@/lib/weekend';
 import type { DeliveryDay } from '@/lib/types';
 
@@ -21,6 +23,7 @@ export type ResumenData = {
   dir: string;
   nota: string;
   total: number;
+  precioCambio?: boolean;
 };
 
 export default function StepDelivery({ finde, onConfirm }: StepDeliveryProps) {
@@ -31,6 +34,9 @@ export default function StepDelivery({ finde, onConfirm }: StepDeliveryProps) {
   const [dir, setDir] = useState('');
   const [dia, setDia] = useState<DeliveryDay | null>(null);
   const [nota, setNota] = useState('');
+
+  const [guardando, setGuardando] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const [errNombre, setErrNombre] = useState(false);
   const [errTel, setErrTel] = useState(false);
@@ -46,7 +52,7 @@ export default function StepDelivery({ finde, onConfirm }: StepDeliveryProps) {
     setTel(v.replace(/[^\d\s]/g, '').slice(0, 13));
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const telDigits = tel.replace(/\D/g, '');
     const badNombre = nombre.trim().length < 3;
     const badTel = telDigits.length !== 10;
@@ -66,33 +72,56 @@ export default function StepDelivery({ finde, onConfirm }: StepDeliveryProps) {
       return;
     }
 
-    const diaTxt = dia === 'sabado'
-      ? `Sábado ${finde?.sabTxt ?? ''}`
-      : `Domingo ${finde?.domTxt ?? ''}`;
+    setGuardando(true);
+    setErrorMsg(null);
 
-    // PED-XXXX se genera en el handler, no en el render
-    const codigo = 'PED-' + String(Math.floor(Math.random() * 9000) + 1000);
-    const lineas = lines.map(l => `${l.qty} × ${dishes[l.id]?.name ?? 'Plato'}`).join(', ');
+    try {
+      const targetDate = dia === 'sabado' ? finde?.sab : finde?.dom;
+      const fechaEntrega = targetDate ? formatFechaIso(targetDate) : '';
 
-    const delivery = {
-      nombre: nombre.trim(),
-      tel: telDigits,
-      dir: dir.trim(),
-      dia,
-      nota: nota.trim(),
-    };
-    const waLink = buildWaLink(lines, total, delivery, diaTxt, codigo, dishes);
+      const platoIdPorIndice: Record<number, string> = {};
+      dishes.forEach(d => {
+        platoIdPorIndice[d.id] = d.platoId;
+      });
 
-    onConfirm(waLink, {
-      codigo,
-      lineas,
-      diaTxt,
-      nombre: nombre.trim(),
-      tel: telDigits,
-      dir: dir.trim(),
-      nota: nota.trim(),
-      total,
-    });
+      const delivery = {
+        nombre: nombre.trim(),
+        tel: telDigits,
+        dir: dir.trim(),
+        dia,
+        nota: nota.trim(),
+      };
+
+      const resultado = await crearPedido(delivery, lines, platoIdPorIndice, fechaEntrega);
+
+      const diaTxt = dia === 'sabado'
+        ? `Sábado ${finde?.sabTxt ?? ''}`
+        : `Domingo ${finde?.domTxt ?? ''}`;
+
+      const codigo = resultado.codigo_orden;
+      const totalFinal = resultado.total;
+      const precioCambio = totalFinal !== total;
+
+      const lineas = lines.map(l => `${l.qty} × ${dishes[l.id]?.name ?? 'Plato'}`).join(', ');
+      const waLink = buildWaLink(lines, totalFinal, delivery, diaTxt, codigo, dishes);
+
+      onConfirm(waLink, {
+        codigo,
+        lineas,
+        diaTxt,
+        nombre: delivery.nombre,
+        tel: delivery.tel,
+        dir: delivery.dir,
+        nota: delivery.nota,
+        total: totalFinal,
+        precioCambio,
+      });
+    } catch (err) {
+      const friendly = mapearErrorPedido(err);
+      setErrorMsg(friendly);
+    } finally {
+      setGuardando(false);
+    }
   };
 
   return (
@@ -200,10 +229,25 @@ export default function StepDelivery({ finde, onConfirm }: StepDeliveryProps) {
           <span>Total</span>
           <strong>{cop(total)}</strong>
         </div>
-        <button className="btn btn-fill" onClick={handleConfirm}>
-          Confirmar pedido
+
+        {errorMsg && (
+          <div style={{ color: '#D5321F', fontSize: '0.85rem', marginBottom: '0.5rem', fontWeight: 500, textAlign: 'center' }}>
+            {errorMsg}
+          </div>
+        )}
+
+        <button
+          className="btn btn-fill"
+          disabled={guardando}
+          onClick={handleConfirm}
+        >
+          {guardando ? 'Guardando…' : 'Confirmar pedido'}
         </button>
-        <button className="btn btn-ghost" onClick={() => setStep(1)}>
+        <button
+          className="btn btn-ghost"
+          disabled={guardando}
+          onClick={() => setStep(1)}
+        >
           Volver al pedido
         </button>
       </div>

@@ -26,8 +26,27 @@ export default function StepDone({ waLink, resumen }: StepDoneProps) {
               <path d="M20 6 9 17l-5-5"/>
             </svg>
           </div>
-          <h3>Ya casi</h3>
-          <p>Toca el botón para enviarnos el pedido por WhatsApp. Hasta que no lo mandes, no nos llega.</p>
+          <h3>Pedido tomado</h3>
+          <p>
+            Tu pedido ya está registrado en nuestra cocina. Toca el botón para avisarnos por WhatsApp y confirmar los detalles de entrega.
+          </p>
+
+          {resumen?.precioCambio && (
+            <div
+              style={{
+                backgroundColor: 'rgba(233, 163, 32, 0.15)',
+                border: '1px solid var(--accent, #E9A320)',
+                color: 'var(--paper-ink, #241A12)',
+                padding: '0.6rem 0.8rem',
+                borderRadius: '4px',
+                fontSize: '0.8rem',
+                margin: '0.75rem 0',
+                textAlign: 'left',
+              }}
+            >
+              <strong>Aviso:</strong> El total se actualizó según la tarifa vigente en la carta.
+            </div>
+          )}
 
           {resumen && (
             <dl className="resumen">
@@ -50,7 +69,7 @@ export default function StepDone({ waLink, resumen }: StepDoneProps) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Enviar por WhatsApp
+          Avísanos por WhatsApp
         </a>
         <button className="btn btn-ghost" onClick={handleOtro}>
           Hacer otro pedido
