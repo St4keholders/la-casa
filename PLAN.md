@@ -52,7 +52,7 @@ El agente edita solo las columnas **Estado** y **Notas** de esta tabla, en sitio
 | # | Fase | Depende de | Estado | Notas |
 |---|------|-----------|--------|-------|
 | 0 | Ordenar los archivos descargados | — | ✅ | 8 migraciones y test e2e en sus carpetas |
-| 1 | Entorno, dependencias y MCP | 0 | ⬜ | |
+| 1 | Entorno, dependencias y MCP | 0 | ✅ | dependencias instaladas, .env.local creado, config.toml listo |
 | 2 | Inventario del proyecto Supabase (solo lectura) | 1 | ⬜ | |
 | 3 | Reconciliación: qué se queda y qué se borra | 2 | ⬜ | |
 | 4 | Aplicar las 8 migraciones | 3 | ⬜ | |
