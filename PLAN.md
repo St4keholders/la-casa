@@ -54,7 +54,7 @@ El agente edita solo las columnas **Estado** y **Notas** de esta tabla, en sitio
 | 0 | Ordenar los archivos descargados | — | ✅ | 8 migraciones y test e2e en sus carpetas |
 | 1 | Entorno, dependencias y MCP | 0 | ✅ | dependencias instaladas, .env.local creado, config.toml listo |
 | 2 | Inventario del proyecto Supabase (solo lectura) | 1 | ✅ | 11 tablas, 1 vista, 4 fns, 6 enums superados; 0 filas en BD |
-| 3 | Reconciliación: qué se queda y qué se borra | 2 | ⬜ | |
+| 3 | Reconciliación: qué se queda y qué se borra | 2 | ✅ | 0 tablas restantes en public; reset limpio aplicado |
 | 4 | Aplicar las 8 migraciones | 3 | ⬜ | |
 | 5 | Semilla desde `lib/dishes.ts` | 4 | ⬜ | |
 | 6 | Tipos y clientes de Supabase | 4 | ⬜ | |
