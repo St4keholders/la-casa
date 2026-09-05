@@ -21,7 +21,7 @@ const ESTADOS_ORDEN: EstadoOrden[] = [
 
 export default function DisenioPage() {
   return (
-    <PanelShell loteCodigo="LOTE-2026-W37" rol="Administrador">
+    <>
       <Garnishes variant="ambiente" />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', position: 'relative', zIndex: 1 }}>
@@ -220,6 +220,6 @@ export default function DisenioPage() {
           </div>
         </section>
       </div>
-    </PanelShell>
+    </>
   );
 }

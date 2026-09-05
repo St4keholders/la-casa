@@ -2,8 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Rotulo from './Rotulo';
+import { createClient } from '@/lib/supabase/client';
 
 export interface PanelShellProps {
   children: React.ReactNode;
@@ -11,21 +12,46 @@ export interface PanelShellProps {
   rol?: string;
 }
 
-const NAV_ITEMS = [
-  { href: '/panel', label: 'Resumen', exact: true },
-  { href: '/panel/comandas', label: 'Comandas' },
-  { href: '/panel/cocina', label: 'Cocina' },
-  { href: '/panel/inventario', label: 'Inventario' },
-  { href: '/panel/lotes', label: 'Lotes' },
-  { href: '/panel/finanzas', label: 'Finanzas' },
+interface NavItem {
+  href: string;
+  label: string;
+  exact?: boolean;
+  roles: string[];
+}
+
+const ALL_NAV_ITEMS: NavItem[] = [
+  { href: '/panel', label: 'Resumen', exact: true, roles: ['admin'] },
+  { href: '/panel/comandas', label: 'Comandas', roles: ['admin', 'cocina', 'repartidor'] },
+  { href: '/panel/cocina', label: 'Cocina', roles: ['admin', 'cocina'] },
+  { href: '/panel/inventario', label: 'Inventario', roles: ['admin', 'cocina'] },
+  { href: '/panel/lotes', label: 'Lotes', roles: ['admin'] },
+  { href: '/panel/finanzas', label: 'Finanzas', roles: ['admin'] },
 ];
 
-export function PanelShell({ children, loteCodigo = 'LOTE-2026-W37', rol = 'Administrador' }: PanelShellProps) {
+export function PanelShell({
+  children,
+  loteCodigo = 'LOTE-2026-W37',
+  rol = 'admin',
+}: PanelShellProps) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const isLinkActive = (href: string, exact = false) => {
     if (exact) return pathname === href;
     return pathname.startsWith(href);
+  };
+
+  const navItems = ALL_NAV_ITEMS.filter((item) => item.roles.includes(rol));
+
+  const handleCerrarSesion = async () => {
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      router.push('/entrar');
+      router.refresh();
+    } catch (err) {
+      console.error('Error al cerrar sesión:', err);
+    }
   };
 
   return (
@@ -48,10 +74,25 @@ export function PanelShell({ children, loteCodigo = 'LOTE-2026-W37', rol = 'Admi
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
             <Rotulo>Rol:</Rotulo>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: '0.75rem', color: 'var(--p-ink)' }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--p-ink)', fontWeight: 600 }}>
               {rol}
             </span>
           </div>
+          <button
+            onClick={handleCerrarSesion}
+            style={{
+              fontFamily: 'var(--mono)',
+              fontSize: '0.72rem',
+              color: 'var(--p-muted)',
+              background: 'transparent',
+              border: '1px solid var(--p-line)',
+              borderRadius: '3px',
+              padding: '0.3rem 0.6rem',
+              cursor: 'pointer',
+            }}
+          >
+            Salir
+          </button>
           <Link
             href="/"
             style={{
@@ -74,7 +115,7 @@ export function PanelShell({ children, loteCodigo = 'LOTE-2026-W37', rol = 'Admi
       <div className="panel-shell">
         <aside className="panel-sidebar" aria-label="Navegación del panel">
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-            {NAV_ITEMS.map((item) => {
+            {navItems.map((item) => {
               const active = isLinkActive(item.href, item.exact);
               return (
                 <Link
