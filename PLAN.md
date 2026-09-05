@@ -56,7 +56,7 @@ El agente edita solo las columnas **Estado** y **Notas** de esta tabla, en sitio
 | 2 | Inventario del proyecto Supabase (solo lectura) | 1 | ✅ | 11 tablas, 1 vista, 4 fns, 6 enums superados; 0 filas en BD |
 | 3 | Reconciliación: qué se queda y qué se borra | 2 | ✅ | 0 tablas restantes en public; reset limpio aplicado |
 | 4 | Aplicar las 8 migraciones | 3 | ✅ | 14 tablas con RLS, vistas con security_invoker verificado |
-| 5 | Semilla desde `lib/dishes.ts` | 4 | ⬜ | |
+| 5 | Semilla desde `lib/dishes.ts` | 4 | ✅ | 4 platos, 23 insumos, recetas y lote activo (16, 14, 9, 5 disponibles) |
 | 6 | Tipos y clientes de Supabase | 4 | ⬜ | |
 | 7 | Sistema de diseño del panel | 1 | ⬜ | |
 | 8 | Menú público dinámico | 5, 6 | ⬜ | |
