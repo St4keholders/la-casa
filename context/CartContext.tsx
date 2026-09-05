@@ -9,10 +9,11 @@ import {
   useCallback,
   type ReactNode,
 } from 'react';
-import { dishes } from '@/lib/dishes';
-import type { CartLine, Step } from '@/lib/types';
+import type { CartLine, Dish, Step } from '@/lib/types';
 
 type CartApi = {
+  dishes: Dish[];
+  setDishes: (d: Dish[]) => void;
   lines: CartLine[];
   units: number;
   total: number;
@@ -27,15 +28,22 @@ type CartApi = {
 
 const CartContext = createContext<CartApi | null>(null);
 
-export function CartProvider({ children }: { children: ReactNode }) {
+export function CartProvider({
+  children,
+  initialDishes = [],
+}: {
+  children: ReactNode;
+  initialDishes?: Dish[];
+}) {
+  const [dishes, setDishes] = useState<Dish[]>(initialDishes);
   const [lines, setLines] = useState<CartLine[]>([]);
   const [open, setOpenRaw] = useState(false);
   const [step, setStep] = useState<Step>(1);
 
   const units = useMemo(() => lines.reduce((s, l) => s + l.qty, 0), [lines]);
   const total = useMemo(
-    () => lines.reduce((s, l) => s + dishes[l.id].price * l.qty, 0),
-    [lines]
+    () => lines.reduce((s, l) => s + (dishes[l.id]?.price ?? 0) * l.qty, 0),
+    [lines, dishes]
   );
 
   const add = useCallback((id: number) => {
@@ -78,7 +86,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [open, setOpen]);
 
   return (
-    <CartContext.Provider value={{ lines, units, total, add, bump, clear, open, setOpen, step, setStep }}>
+    <CartContext.Provider
+      value={{
+        dishes,
+        setDishes,
+        lines,
+        units,
+        total,
+        add,
+        bump,
+        clear,
+        open,
+        setOpen,
+        step,
+        setStep,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

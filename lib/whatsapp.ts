@@ -1,6 +1,5 @@
 import { cop } from './format';
-import { dishes } from './dishes';
-import type { CartLine, Delivery } from './types';
+import type { CartLine, Delivery, Dish } from './types';
 
 export const WHATSAPP = '573025219775';
 
@@ -9,10 +8,16 @@ export function buildWaLink(
   total: number,
   d: Delivery,
   diaTxt: string,
-  codigo: string
+  codigo: string,
+  dishes: Dish[]
 ): string {
   const items = lines
-    .map(l => `• ${l.qty} × ${dishes[l.id].name} — ${cop(dishes[l.id].price * l.qty)}`)
+    .map(l => {
+      const dish = dishes[l.id];
+      const name = dish?.name ?? 'Plato';
+      const price = dish?.price ?? 0;
+      return `• ${l.qty} × ${name} — ${cop(price * l.qty)}`;
+    })
     .join('\n');
 
   const msg =

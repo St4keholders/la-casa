@@ -1,7 +1,6 @@
 'use client';
 
 import { useCart } from '@/context/CartContext';
-import { dishes } from '@/lib/dishes';
 import { cop } from '@/lib/format';
 import type { Finde } from '@/lib/weekend';
 
@@ -10,7 +9,7 @@ interface StepCartProps {
 }
 
 export default function StepCart({ finde }: StepCartProps) {
-  const { lines, units, total, bump, setStep } = useCart();
+  const { lines, units, total, bump, setStep, dishes } = useCart();
 
   return (
     <>
@@ -37,6 +36,7 @@ export default function StepCart({ finde }: StepCartProps) {
           ) : (
             lines.map(l => {
               const d = dishes[l.id];
+              if (!d) return null;
               return (
                 <div className="line" key={l.id}>
                   <div className="line-thumb">

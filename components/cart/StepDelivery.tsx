@@ -2,7 +2,6 @@
 
 import { useRef, useState } from 'react';
 import { useCart } from '@/context/CartContext';
-import { dishes } from '@/lib/dishes';
 import { cop } from '@/lib/format';
 import { buildWaLink } from '@/lib/whatsapp';
 import type { Finde } from '@/lib/weekend';
@@ -25,7 +24,7 @@ export type ResumenData = {
 };
 
 export default function StepDelivery({ finde, onConfirm }: StepDeliveryProps) {
-  const { lines, total, setStep } = useCart();
+  const { lines, total, setStep, dishes } = useCart();
 
   const [nombre, setNombre] = useState('');
   const [tel, setTel] = useState('');
@@ -73,7 +72,7 @@ export default function StepDelivery({ finde, onConfirm }: StepDeliveryProps) {
 
     // PED-XXXX se genera en el handler, no en el render
     const codigo = 'PED-' + String(Math.floor(Math.random() * 9000) + 1000);
-    const lineas = lines.map(l => `${l.qty} × ${dishes[l.id].name}`).join(', ');
+    const lineas = lines.map(l => `${l.qty} × ${dishes[l.id]?.name ?? 'Plato'}`).join(', ');
 
     const delivery = {
       nombre: nombre.trim(),
@@ -82,7 +81,7 @@ export default function StepDelivery({ finde, onConfirm }: StepDeliveryProps) {
       dia,
       nota: nota.trim(),
     };
-    const waLink = buildWaLink(lines, total, delivery, diaTxt, codigo);
+    const waLink = buildWaLink(lines, total, delivery, diaTxt, codigo, dishes);
 
     onConfirm(waLink, {
       codigo,

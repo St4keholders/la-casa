@@ -1,7 +1,13 @@
-import { dishes } from '@/lib/dishes';
+import type { Dish } from '@/lib/types';
 import DishCard from './DishCard';
 
-export default function MenuSection() {
+interface MenuSectionProps {
+  dishes: Dish[];
+}
+
+export default function MenuSection({ dishes }: MenuSectionProps) {
+  if (dishes.length === 0) return null;
+
   return (
     <section className="menu" id="menu">
       <div className="menu-head">

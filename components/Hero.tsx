@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
-import { dishes } from '@/lib/dishes';
+import type { Dish } from '@/lib/types';
 import { pad } from '@/lib/format';
 import { useCart } from '@/context/CartContext';
 import Plate from './Plate';
@@ -15,41 +15,56 @@ function offset(i: number, active: number, n: number): string {
   return Math.abs(o) <= 2 ? String(o) : 'x';
 }
 
-export default function Hero() {
+interface HeroProps {
+  dishes?: Dish[];
+}
+
+export default function Hero({ dishes = [] }: HeroProps) {
   const [active, setActive] = useState(0);
   const [dir, setDir] = useState<1 | -1>(1);
   const [ctaText, setCtaText] = useState<'add' | 'done'>('add');
-  const { add, open: cartOpen } = useCart();
+  const { add, open: cartOpen, setDishes } = useCart();
   const wordRef = useRef<HTMLSpanElement>(null);
   const carRef = useRef<HTMLElement>(null);
   const ctaTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const liveRef = useRef<HTMLParagraphElement>(null);
   const pointerX = useRef<number | null>(null);
 
+  // Sync dishes to CartContext
+  useEffect(() => {
+    if (dishes.length > 0) {
+      setDishes(dishes);
+    }
+  }, [dishes, setDishes]);
+
   const go = useCallback((next: number, d?: 1 | -1) => {
+    if (dishes.length === 0) return;
     const newActive = ((next % dishes.length) + dishes.length) % dishes.length;
     const newDir = d ?? (next > active ? 1 : -1);
     setDir(newDir as 1 | -1);
     setActive(newActive);
-  }, [active]);
+  }, [active, dishes.length]);
 
   // Apply colors to documentElement when active changes
   useEffect(() => {
+    if (dishes.length === 0) return;
     const d = dishes[active];
+    if (!d) return;
     const r = document.documentElement.style;
     r.setProperty('--bg', d.bg);
     r.setProperty('--ink', d.ink);
     r.setProperty('--accent', d.accent);
     r.setProperty('--accent-ink', d.aink);
-  }, [active]);
+  }, [active, dishes]);
 
   // Update live region
   useEffect(() => {
+    if (dishes.length === 0) return;
     const d = dishes[active];
-    if (liveRef.current) {
+    if (d && liveRef.current) {
       liveRef.current.textContent = `${d.name}, $${d.price.toLocaleString('es-CO')}. Opción ${active + 1} de ${dishes.length}.`;
     }
-  }, [active]);
+  }, [active, dishes]);
 
   // fitWord
   const fitWord = useCallback(() => {
@@ -98,9 +113,10 @@ export default function Hero() {
   const onPointerCancel = () => { pointerX.current = null; };
 
   const handleAdd = () => {
+    if (dishes.length === 0) return;
     add(active);
     const d = dishes[active];
-    if (liveRef.current) {
+    if (d && liveRef.current) {
       liveRef.current.textContent = `${d.name} añadido.`;
     }
     setCtaText('done');
@@ -108,7 +124,53 @@ export default function Hero() {
     ctaTimerRef.current = setTimeout(() => setCtaText('add'), 1800);
   };
 
-  const d = dishes[active];
+  // Estado vacío: si getMenu devuelve 0 platos (no hay lote activo)
+  if (dishes.length === 0) {
+    return (
+      <main
+        className="stage"
+        style={{
+          minHeight: '65vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
+          padding: '3rem 1.5rem',
+        }}
+      >
+        <p className="kicker">La casa · Almuerzos de fin de semana</p>
+        <h1
+          style={{
+            fontFamily: 'var(--display)',
+            fontVariationSettings: "'wdth' 108, 'wght' 800",
+            fontStyle: 'italic',
+            textTransform: 'uppercase',
+            fontSize: 'clamp(1.8rem, 4vw, 2.6rem)',
+            margin: '1.25rem 0',
+            color: 'var(--ink, #1B3B2F)',
+            lineHeight: 1.1,
+          }}
+        >
+          Esta semana no hay pedidos abiertos
+        </h1>
+        <p
+          style={{
+            fontFamily: 'var(--sans)',
+            color: 'var(--muted, #6B7C74)',
+            maxWidth: '480px',
+            margin: '0 auto',
+            lineHeight: 1.5,
+            fontSize: '1rem',
+          }}
+        >
+          Abrimos la carta cada semana para entregas de sábado y domingo. Vuelve pronto para pedir tu almuerzo del próximo fin de semana.
+        </p>
+      </main>
+    );
+  }
+
+  const d = dishes[active] || dishes[0];
 
   return (
     <main className="stage">

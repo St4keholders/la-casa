@@ -4,6 +4,7 @@ export type GarnishKey =
 
 export type Dish = {
   id: number;
+  platoId: string;
   kick: string;
   word: string;
   name: string;
