@@ -105,7 +105,10 @@ export default function LotesPage() {
   }, []);
 
   useEffect(() => {
-    cargarDatos();
+    const timer = setTimeout(() => {
+      void cargarDatos();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [cargarDatos]);
 
   const handleCambioLoteGastos = async (id: string) => {
@@ -165,8 +168,8 @@ export default function LotesPage() {
       setMostrarCrearLote(false);
       setCodigoLote('');
       await cargarDatos();
-    } catch (err: any) {
-      setErrorCrearLote(err.message || 'Error al crear el lote');
+    } catch (err: unknown) {
+      setErrorCrearLote(err instanceof Error ? err.message : 'Error al crear el lote');
     } finally {
       setCreandoLote(false);
     }
@@ -186,8 +189,8 @@ export default function LotesPage() {
     try {
       const prev = await getPrevisualizacionCierre(lote.id);
       setPrevisualizacion(prev);
-    } catch (err: any) {
-      setCierreError(err.message || 'Error calculando previsualización');
+    } catch (err: unknown) {
+      setCierreError(err instanceof Error ? err.message : 'Error calculando previsualización');
     } finally {
       setCargandoPrev(false);
     }
@@ -215,8 +218,8 @@ export default function LotesPage() {
         `Lote cerrado con éxito. Insumos transferidos: ${res.insumos_transferidos}. Insumos perecederos dados de baja: ${res.insumos_dados_de_baja}. Asientos contables generados.`
       );
       await cargarDatos();
-    } catch (err: any) {
-      setCierreError(err.message || 'Error al cerrar y transferir lote');
+    } catch (err: unknown) {
+      setCierreError(err instanceof Error ? err.message : 'Error al cerrar y transferir lote');
     } finally {
       setEjecutandoCierre(false);
     }
@@ -256,8 +259,8 @@ export default function LotesPage() {
       setGastoMonto('');
       const gsts = await getGastosLote(loteSeleccionadoId);
       setGastos(gsts);
-    } catch (err: any) {
-      setGastoError(err.message || 'Error al registrar el gasto');
+    } catch (err: unknown) {
+      setGastoError(err instanceof Error ? err.message : 'Error al registrar el gasto');
     } finally {
       setGuardandoGasto(false);
     }
@@ -271,7 +274,6 @@ export default function LotesPage() {
     );
   }
 
-  const loteActivo = lotes.find((l) => l.estado === 'activo');
   const lotesBorrador = lotes.filter((l) => l.estado === 'borrador');
 
   return (

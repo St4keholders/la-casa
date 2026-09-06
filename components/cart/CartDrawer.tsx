@@ -17,12 +17,9 @@ export default function CartDrawer() {
   const { open, setOpen, step, setStep } = useCart();
   const closeRef = useRef<HTMLButtonElement>(null);
   const openBtnRef = useRef<HTMLElement | null>(null);
-  const [finde, setFinde] = useState<Finde | null>(null);
+  const [finde] = useState<Finde | null>(() => (typeof window !== 'undefined' ? finDeSemana() : null));
   const [waLink, setWaLink] = useState('');
   const [resumen, setResumen] = useState<ResumenData | null>(null);
-
-  // finDeSemana — only client side, inside useEffect
-  useEffect(() => { setFinde(finDeSemana()); }, []);
 
   // Focus management
   useEffect(() => {

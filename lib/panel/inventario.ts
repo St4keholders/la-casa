@@ -39,15 +39,15 @@ export async function getAlertasInventario(codigoLote?: string): Promise<AlertaI
     return [];
   }
 
-  return (data as any[])
+  return (data as unknown as Record<string, unknown>[])
     .filter((a) => a.alerta !== 'ok')
     .map((a) => ({
-      codigo_lote: a.codigo_lote ?? '',
-      insumo: a.insumo ?? '',
-      unidad_medida: a.unidad_medida ?? '',
+      codigo_lote: String(a.codigo_lote ?? ''),
+      insumo: String(a.insumo ?? ''),
+      unidad_medida: String(a.unidad_medida ?? ''),
       saldo_teorico: Number(a.saldo_teorico ?? 0),
-      stock_final_real: a.stock_final_real !== null ? Number(a.stock_final_real) : null,
-      varianza_conteo: a.varianza_conteo !== null ? Number(a.varianza_conteo) : null,
+      stock_final_real: a.stock_final_real !== null && a.stock_final_real !== undefined ? Number(a.stock_final_real) : null,
+      varianza_conteo: a.varianza_conteo !== null && a.varianza_conteo !== undefined ? Number(a.varianza_conteo) : null,
       valor_saldo: Number(a.valor_saldo ?? 0),
       alerta: a.alerta as AlertaInventario['alerta'],
     }));

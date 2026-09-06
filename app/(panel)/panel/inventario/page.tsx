@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Rotulo from '@/components/panel/Rotulo';
 import { Comanda, ComandaHeader, ComandaTitle } from '@/components/panel/Comanda';
-import Cifra from '@/components/panel/Cifra';
 import { cop } from '@/lib/format';
 import {
   getAlertasInventario,
@@ -68,7 +67,10 @@ export default function InventarioPage() {
   }, [compraInsumoId]);
 
   useEffect(() => {
-    cargarDatos();
+    const timer = setTimeout(() => {
+      void cargarDatos();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [cargarDatos]);
 
   const handleGuardarConteo = async (insumoId: string) => {
@@ -80,8 +82,8 @@ export default function InventarioPage() {
     try {
       await guardarConteoFisico(lote.id, insumoId, val);
       await cargarDatos();
-    } catch (err: any) {
-      alert(`Error al guardar conteo: ${err.message || err}`);
+    } catch (err: unknown) {
+      alert(`Error al guardar conteo: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setGuardandoConteo(null);
     }
@@ -123,8 +125,8 @@ export default function InventarioPage() {
       setCompraCostoUnitario('');
       setDocumento('');
       await cargarDatos();
-    } catch (err: any) {
-      setCompraError(err.message || 'Error al registrar la compra');
+    } catch (err: unknown) {
+      setCompraError(err instanceof Error ? err.message : 'Error al registrar la compra');
     } finally {
       setGuardandoCompra(false);
     }

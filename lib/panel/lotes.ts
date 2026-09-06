@@ -98,17 +98,17 @@ export async function getLotes(): Promise<LoteResumen[]> {
     });
   }
 
-  return (lotesData as any[]).map((l) => {
-    const pnl = pnlMap.get(l.codigo_lote ?? '');
+  return (lotesData as unknown as Record<string, unknown>[]).map((l) => {
+    const pnl = pnlMap.get(String(l.codigo_lote ?? ''));
     return {
-      id: l.id,
-      codigo_lote: l.codigo_lote,
-      fecha_apertura: l.fecha_apertura,
-      fecha_entrega_desde: l.fecha_entrega_desde,
-      fecha_entrega_hasta: l.fecha_entrega_hasta,
-      fecha_cierre: l.fecha_cierre,
+      id: String(l.id ?? ''),
+      codigo_lote: String(l.codigo_lote ?? ''),
+      fecha_apertura: String(l.fecha_apertura ?? ''),
+      fecha_entrega_desde: String(l.fecha_entrega_desde ?? ''),
+      fecha_entrega_hasta: String(l.fecha_entrega_hasta ?? ''),
+      fecha_cierre: l.fecha_cierre ? String(l.fecha_cierre) : null,
       estado: l.estado as EstadoLote,
-      nombre_domiciliario: l.nombre_domiciliario,
+      nombre_domiciliario: l.nombre_domiciliario ? String(l.nombre_domiciliario) : null,
       tarifa_fija_domiciliario: Number(l.tarifa_fija_domiciliario ?? 0),
       tarifa_domicilio_cliente: Number(l.tarifa_domicilio_cliente ?? 0),
       utilidad_operacional: pnl ? pnl.utilidad_operacional : null,
@@ -252,7 +252,19 @@ export async function getPrevisualizacionCierre(loteId: string): Promise<Previsu
   const perecederos_a_baja: PrevisualizacionCierre['perecederos_a_baja'] = [];
   let costo_total_perdida = 0;
 
-  invData.forEach((row: any) => {
+  type RawInvRow = {
+    insumo_id: string;
+    costo_unitario_aplicado: number;
+    stock_final_real: number | null;
+    saldo_teorico: number;
+    insumos: {
+      nombre: string;
+      unidad_medida: string;
+      es_perecedero: boolean;
+    } | null;
+  };
+
+  (invData as unknown as RawInvRow[]).forEach((row) => {
     const rawSaldo = row.stock_final_real !== null ? Number(row.stock_final_real) : Number(row.saldo_teorico);
     const saldo = Math.max(rawSaldo, 0);
     if (saldo <= 0) return;
@@ -342,13 +354,26 @@ export async function getGastosLote(loteId: string): Promise<GastoLote[]> {
     return [];
   }
 
-  return (data as any[]).map((g) => ({
+  type RawGasto = {
+    id: string;
+    lote_id: string;
+    ceco_id: string | null;
+    tipo: TipoGastoLote;
+    inductor: InductorProrrateo;
+    concepto: string;
+    monto: number;
+    fecha: string;
+    created_at: string;
+    platos: { nombre: string } | null;
+  };
+
+  return (data as unknown as RawGasto[]).map((g) => ({
     id: g.id,
     lote_id: g.lote_id,
     ceco_id: g.ceco_id,
     plato_nombre: g.platos?.nombre,
-    tipo: g.tipo as TipoGastoLote,
-    inductor: g.inductor as InductorProrrateo,
+    tipo: g.tipo,
+    inductor: g.inductor,
     concepto: g.concepto,
     monto: Number(g.monto ?? 0),
     fecha: g.fecha,

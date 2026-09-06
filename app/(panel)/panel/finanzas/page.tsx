@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Rotulo from '@/components/panel/Rotulo';
 import { Comanda, ComandaHeader, ComandaTitle } from '@/components/panel/Comanda';
 import Cifra from '@/components/panel/Cifra';
-import Barra from '@/components/panel/Barra';
 import EstadoPill from '@/components/panel/EstadoPill';
 import { cop } from '@/lib/format';
 import { getLotes, type LoteResumen } from '@/lib/panel/lotes';
@@ -65,7 +64,10 @@ export default function FinanzasPage() {
   }, []);
 
   useEffect(() => {
-    cargarDatos();
+    const timer = setTimeout(() => {
+      void cargarDatos();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [cargarDatos]);
 
   const handleCambioLote = async (nuevoLoteId: string) => {
@@ -110,8 +112,8 @@ export default function FinanzasPage() {
       ]);
       setPnl(pnlActualizado);
       setLibroDiario(diarioActualizado);
-    } catch (err: any) {
-      setErrorLiquidacion(err.message || 'Error al liquidar domiciliario');
+    } catch (err: unknown) {
+      setErrorLiquidacion(err instanceof Error ? err.message : 'Error al liquidar domiciliario');
     } finally {
       setLiquidando(false);
     }

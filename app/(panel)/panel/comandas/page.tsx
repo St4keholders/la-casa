@@ -53,7 +53,10 @@ export default function ComandasPage() {
   }, [filtroDia, filtroTel]);
 
   useEffect(() => {
-    cargar();
+    const timer = setTimeout(() => {
+      void cargar();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [cargar]);
 
   // Suscripción en tiempo real a cambios en la tabla ordenes
@@ -65,7 +68,7 @@ export default function ComandasPage() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'ordenes' },
         () => {
-          cargar();
+          void cargar();
         }
       )
       .subscribe();
@@ -91,8 +94,8 @@ export default function ComandasPage() {
     try {
       await actualizarEstadoOrden(orden.id, siguiente);
       await cargar();
-    } catch (err: any) {
-      alert(`Error al cambiar estado: ${err.message || err}`);
+    } catch (err: unknown) {
+      alert(`Error al cambiar estado: ${err instanceof Error ? err.message : String(err)}`);
     }
   };
 
@@ -105,8 +108,8 @@ export default function ComandasPage() {
       await actualizarEstadoOrden(ordenADespachar.id, 'despachado');
       setOrdenADespachar(null);
       await cargar();
-    } catch (err: any) {
-      setDespachoError(err.message || 'Error al despachar la orden');
+    } catch (err: unknown) {
+      setDespachoError(err instanceof Error ? err.message : 'Error al despachar la orden');
     } finally {
       setDespachando(false);
     }
@@ -127,8 +130,8 @@ export default function ComandasPage() {
       setOrdenAAnular(null);
       setMotivoAnulacion('');
       await cargar();
-    } catch (err: any) {
-      setAnulacionError(err.message || 'Error al anular la orden despachada');
+    } catch (err: unknown) {
+      setAnulacionError(err instanceof Error ? err.message : 'Error al anular la orden despachada');
     } finally {
       setAnulando(false);
     }
@@ -142,6 +145,14 @@ export default function ComandasPage() {
       return c.estado === estado;
     });
   };
+
+  if (cargando && comandas.length === 0) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'var(--mono)', color: 'var(--p-muted)' }}>
+        Cargando muro de comandas…
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

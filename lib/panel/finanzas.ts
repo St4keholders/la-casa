@@ -69,11 +69,11 @@ export async function getRendimientoCecos(codigoLote: string): Promise<Rendimien
     return [];
   }
 
-  return (data as any[]).map((r) => ({
-    codigo_lote: r.codigo_lote ?? '',
-    estado_lote: r.estado_lote ?? '',
-    codigo_ceco: r.codigo_ceco ?? '',
-    platillo: r.platillo ?? '',
+  return (data as unknown as Record<string, unknown>[]).map((r) => ({
+    codigo_lote: String(r.codigo_lote ?? ''),
+    estado_lote: String(r.estado_lote ?? ''),
+    codigo_ceco: String(r.codigo_ceco ?? ''),
+    platillo: String(r.platillo ?? ''),
     precio_venta_lote: Number(r.precio_venta_lote ?? 0),
     unidades_proyectadas: Number(r.unidades_proyectadas ?? 0),
     unidades_vendidas: Number(r.unidades_vendidas ?? 0),
@@ -103,10 +103,10 @@ export async function getPnlLote(codigoLote: string): Promise<PnlLote | null> {
     return null;
   }
 
-  const p = data as any;
+  const p = data as unknown as Record<string, unknown>;
   return {
-    codigo_lote: p.codigo_lote ?? '',
-    estado: p.estado ?? '',
+    codigo_lote: String(p.codigo_lote ?? ''),
+    estado: String(p.estado ?? ''),
     ingresos: Number(p.ingresos ?? 0),
     costo_mercancia_vendida: Number(p.costo_mercancia_vendida ?? 0),
     perdida_merma: Number(p.perdida_merma ?? 0),
@@ -129,9 +129,9 @@ export async function getPnlHistorico(): Promise<PnlLote[]> {
     return [];
   }
 
-  return (data as any[]).map((p) => ({
-    codigo_lote: p.codigo_lote ?? '',
-    estado: p.estado ?? '',
+  return (data as unknown as Record<string, unknown>[]).map((p) => ({
+    codigo_lote: String(p.codigo_lote ?? ''),
+    estado: String(p.estado ?? ''),
     ingresos: Number(p.ingresos ?? 0),
     costo_mercancia_vendida: Number(p.costo_mercancia_vendida ?? 0),
     perdida_merma: Number(p.perdida_merma ?? 0),
@@ -177,7 +177,19 @@ export async function getLibroDiario(loteId?: string): Promise<TransaccionDiario
   // Agrupar por transaccion_id
   const mapa = new Map<string, TransaccionDiario>();
 
-  (data as any[]).forEach((row) => {
+  type RawDiarioRow = {
+    id: string;
+    transaccion_id: string;
+    tipo_asiento: string;
+    cuenta: string;
+    descripcion: string;
+    debito: number;
+    credito: number;
+    es_pasivo_tercero: boolean;
+    fecha_registro: string;
+  };
+
+  (data as unknown as RawDiarioRow[]).forEach((row) => {
     const txnId = row.transaccion_id;
     const deb = Number(row.debito ?? 0);
     const cred = Number(row.credito ?? 0);

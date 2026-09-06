@@ -73,7 +73,10 @@ export default function CocinaPage() {
   }, [selectedInsumo]);
 
   useEffect(() => {
-    cargarDatos();
+    const timer = setTimeout(() => {
+      void cargarDatos();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [cargarDatos]);
 
   const handleReportarMerma = async (e: React.FormEvent) => {
@@ -105,8 +108,8 @@ export default function CocinaPage() {
       setCantidad('');
       setMotivo('');
       await cargarDatos();
-    } catch (err: any) {
-      setMermaError(err.message || 'Error al registrar la merma');
+    } catch (err: unknown) {
+      setMermaError(err instanceof Error ? err.message : 'Error al registrar la merma');
     } finally {
       setGuardandoMerma(false);
     }
