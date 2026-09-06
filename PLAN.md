@@ -66,7 +66,7 @@ El agente edita solo las columnas **Estado** y **Notas** de esta tabla, en sitio
 | 12 | Panel · Cocina: producción y mermas | 10 | ✅ | vista_produccion_dia, reporte de mermas con costo en pesos y recetas |
 | 13 | Panel · Inventario y compras | 10 | ✅ | kárdex perpetuo, alertas en vivo, compras ponderadas y asiento $200.000 verificado |
 | 14 | Panel · Lotes: apertura, carta y cierre | 10 | ✅ | apertura con distinción de tarifas, carta semanal, cierre con transferencia de no perecederos y baja de perecederos verificado |
-| 15 | Panel · Finanzas | 10 | ⬜ | |
+| 15 | Panel · Finanzas | 10 | ✅ | rentabilidad por CeCo, P&G cuadrado, liquidación de domiciliario y libro diario inmutable |
 | 16 | QA y publicación | todas | ⬜ | |
 
 Leyenda: ⬜ pendiente · 🟨 en curso · ✅ hecho · 🟥 bloqueada
