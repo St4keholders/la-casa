@@ -64,7 +64,7 @@ El agente edita solo las columnas **Estado** y **Notas** de esta tabla, en sitio
 | 10 | Auth y layout del panel | 6, 7 | ✅ | magic link, PKCE callback, guard de roles, limpieza de variables carrusel |
 | 11 | Panel · Comandas del fin de semana | 10 | ✅ | muro kanban, transición táctil, confirmación de despacho y asientos cuadrados |
 | 12 | Panel · Cocina: producción y mermas | 10 | ✅ | vista_produccion_dia, reporte de mermas con costo en pesos y recetas |
-| 13 | Panel · Inventario y compras | 10 | ⬜ | |
+| 13 | Panel · Inventario y compras | 10 | ✅ | kárdex perpetuo, alertas en vivo, compras ponderadas y asiento $200.000 verificado |
 | 14 | Panel · Lotes: apertura, carta y cierre | 10 | ⬜ | |
 | 15 | Panel · Finanzas | 10 | ⬜ | |
 | 16 | QA y publicación | todas | ⬜ | |
