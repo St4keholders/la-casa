@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { getCurrentUserProfile, getActiveLote } from '@/lib/panel/auth';
 import PanelShell from '@/components/panel/PanelShell';
 import PendienteAprobacion from '@/components/panel/PendienteAprobacion';
+export const dynamic = 'force-dynamic';
 
 export default async function PanelAppLayout({
   children,

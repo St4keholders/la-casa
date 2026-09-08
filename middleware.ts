@@ -7,9 +7,8 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Matcher que excluye la ruta raíz pública '/' y assets estáticos:
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$|^$).*)',
+    '/panel/:path*',
+    '/entrar',
   ],
 };
+
