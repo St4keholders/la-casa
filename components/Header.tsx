@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 
 export default function Header() {
@@ -21,10 +22,59 @@ export default function Header() {
 
   return (
     <header className="top">
-      <a className="brand" href="#">
+      <Link className="brand" href="/">
         <span className="bowl" aria-hidden="true" />
         La casa
-      </a>
+      </Link>
+      <Link
+        href="/entrar"
+        id="loginBtn"
+        className="header-login-btn"
+        aria-label="Iniciar sesión para acceder al panel"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = 'var(--accent)';
+          e.currentTarget.style.color = 'var(--accent-ink)';
+          e.currentTarget.style.borderColor = 'var(--accent)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--ink) 6%, transparent)';
+          e.currentTarget.style.color = 'var(--ink)';
+          e.currentTarget.style.borderColor = 'color-mix(in srgb, var(--ink) 35%, transparent)';
+        }}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '0.45rem',
+          fontFamily: 'var(--mono)',
+          fontSize: '0.68rem',
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          color: 'var(--ink)',
+          textDecoration: 'none',
+          padding: '0.45rem 0.9rem',
+          borderRadius: '999px',
+          border: '1.5px solid color-mix(in srgb, var(--ink) 35%, transparent)',
+          backgroundColor: 'color-mix(in srgb, var(--ink) 6%, transparent)',
+          transition: 'background 0.2s ease, border-color 0.2s ease, color 0.2s ease',
+        }}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2.2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          width={14}
+          height={14}
+          aria-hidden="true"
+        >
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+          <polyline points="10 17 15 12 10 7" />
+          <line x1="15" y1="12" x2="3" y2="12" />
+        </svg>
+        <span>Iniciar sesión</span>
+      </Link>
       <nav className="nav" aria-label="Principal">
         <a href="#menu" className="is-key">Ver el menú</a>
       </nav>
